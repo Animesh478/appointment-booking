@@ -13,19 +13,22 @@ const fakeDb = [
   },
 ];
 
+const url = "http://localhost:3000/api/users";
 const form = document.querySelector("#form");
 const appointmentsList = document.querySelector("ul");
 const editBtn = document.querySelector(".edit-btn");
 const delBtn = document.querySelector(".delete-btn");
 
 // get all appointments
-function getAllAppointments() {
+async function getAllAppointments() {
   // make an api call to the server
-  return fakeDb;
+  const result = await axios.get(`${url}`);
+  const data = result.data.data;
+  return data;
 }
 
 // create an appointment
-function createAppointment(appointment) {
+function createAppointmentElement(appointment) {
   // creating the elements
   const li = document.createElement("li");
   li.className = "appointment";
@@ -61,18 +64,31 @@ function createAppointment(appointment) {
 }
 
 // display all the appointments
-function displayAppointments() {
+async function displayAppointments() {
   appointmentsList.innerHTML = "";
-  const res = getAllAppointments();
+  const result = await getAllAppointments(); //getting all the appointment details
 
-  res.forEach((appointment) => {
-    createAppointment(appointment);
+  result.forEach((appointment) => {
+    createAppointmentElement(appointment); //creating each item in the appointment list
   });
 }
 
 // submit form
-function formSubmit() {
+async function formSubmit(e) {
+  e.preventDefault();
   // post request to the server
+  const formData = new FormData(form);
+  const data = {};
+  for (let [key, value] of formData) {
+    data[key] = value;
+  }
+
+  try {
+    const response = await axios.post(`${url}`, data);
+    console.log(response);
+  } catch (error) {
+    console.log(error.message);
+  }
 
   // display the appointments
   displayAppointments();
@@ -97,11 +113,11 @@ function editAppointment() {
 // event listeners
 editBtn.addEventListener("click", editAppointment);
 delBtn.addEventListener("click", deleteAppointment);
-// form.addEventListener("submit");
+form.addEventListener("submit", formSubmit);
 
 // do all the initialisations inside this function
 function init() {
-  appointmentsList.innerHTML = "";
+  // appointmentsList.innerHTML = "";
   displayAppointments();
 }
 

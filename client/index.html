@@ -10,20 +10,31 @@
     <div class="container">
       <div class="left-container">
         <h1>Book your Appointment</h1>
-        <form class="form" id="form">
+        <form class="form" id="form" method="post">
           <div class="form-control">
             <label for="name"></label>
-            <input type="text" id="name" placeholder="Enter your Name..." />
+            <input
+              type="text"
+              id="name"
+              name="name"
+              placeholder="Enter your Name..."
+            />
           </div>
           <div class="form-control">
             <label for="email"></label>
-            <input type="email" id="email" placeholder="Enter your Email..." />
+            <input
+              type="email"
+              id="email"
+              name="email"
+              placeholder="Enter your Email..."
+            />
           </div>
           <div class="form-control">
             <label for="phone-number"></label>
             <input
               type="number"
               id="phone-number"
+              name="phone-number"
               placeholder="Enter your Phone Number..."
             />
           </div>
@@ -55,5 +66,7 @@
       </div>
     </div>
   </body>
-  <script src="index.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+  <script src="script.js"></script>
 </html>
