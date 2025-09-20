@@ -22,9 +22,13 @@ const delBtn = document.querySelector(".delete-btn");
 // get all appointments
 async function getAllAppointments() {
   // make an api call to the server
-  const result = await axios.get(`${url}`);
-  const data = result.data.data;
-  return data;
+  try {
+    const result = await axios.get(`${url}`);
+    const data = result.data.data;
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 // create an appointment
@@ -41,7 +45,7 @@ function createAppointmentElement(appointment) {
   const divEmail = document.createElement("div");
   divEmail.textContent = appointment.email;
   const divPhone = document.createElement("div");
-  divPhone.textContent = appointment.phone;
+  divPhone.textContent = appointment.phoneNumber;
 
   divDetails.appendChild(divName);
   divDetails.appendChild(divEmail);
@@ -66,11 +70,16 @@ function createAppointmentElement(appointment) {
 // display all the appointments
 async function displayAppointments() {
   appointmentsList.innerHTML = "";
-  const result = await getAllAppointments(); //getting all the appointment details
+  try {
+    const result = await getAllAppointments(); //getting all the appointment details
 
-  result.forEach((appointment) => {
-    createAppointmentElement(appointment); //creating each item in the appointment list
-  });
+    result.forEach((appointment) => {
+      console.log(appointment);
+      createAppointmentElement(appointment); //creating each item in the appointment list
+    });
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 // submit form
@@ -90,7 +99,7 @@ async function formSubmit(e) {
     console.log(error.message);
   }
 
-  // display the appointments
+  // display the appointments including the newly added one
   displayAppointments();
 }
 
