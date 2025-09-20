@@ -1,23 +1,7 @@
-const fakeDb = [
-  {
-    id: 1,
-    name: "Jon Doe",
-    email: "jon@gmail.com",
-    phone: "9040111222",
-  },
-  {
-    id: 2,
-    name: "Alen Doe",
-    email: "alen@gmail.com",
-    phone: "9040111333",
-  },
-];
-
 const url = "http://localhost:3000/api/users";
 const form = document.querySelector("#form");
 const appointmentsList = document.querySelector("ul");
-const editBtn = document.querySelector(".edit-btn");
-const delBtn = document.querySelector(".delete-btn");
+// const editBtn = document.querySelector(".edit-btn");
 
 // get all appointments
 async function getAllAppointments() {
@@ -36,6 +20,7 @@ function createAppointmentElement(appointment) {
   // creating the elements
   const li = document.createElement("li");
   li.className = "appointment";
+  li.dataset.id = appointment.id;
 
   const divDetails = document.createElement("div");
   divDetails.className = "appointment-details";
@@ -74,7 +59,7 @@ async function displayAppointments() {
     const result = await getAllAppointments(); //getting all the appointment details
 
     result.forEach((appointment) => {
-      console.log(appointment);
+      // console.log(appointment);
       createAppointmentElement(appointment); //creating each item in the appointment list
     });
   } catch (error) {
@@ -101,32 +86,47 @@ async function formSubmit(e) {
 
   // display the appointments including the newly added one
   displayAppointments();
+
+  // clearing the input fields
+  document.getElementById("name").value = "";
+  document.getElementById("email").value = "";
+  document.getElementById("phone").value = "";
 }
 
 // deleting an appointment
-function deleteAppointment() {
+async function deleteAppointment(e) {
   // delete api call to the server
-
-  // display all the remaining appointments
-  displayAppointments();
+  try {
+    if (e.target.classList.contains("delete-btn")) {
+      const id = e.target.parentElement.dataset.id;
+      const response = await axios.delete(`${url}/${id}`);
+      console.log(response);
+      // display all the remaining appointments
+      displayAppointments();
+    }
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 // editing an appointment
-function editAppointment() {
+function editAppointment(e) {
+  if (e.target.classList.contains("edit-btn")) {
+    const id = e.target.parentElement.dataset.id;
+    displayAppointments();
+  }
   // make a put or patch request to the server with the new details
 
   // display all the appointments
-  displayAppointments();
 }
 
 // event listeners
-editBtn.addEventListener("click", editAppointment);
-delBtn.addEventListener("click", deleteAppointment);
+appointmentsList.addEventListener("click", editAppointment);
+appointmentsList.addEventListener("click", deleteAppointment);
 form.addEventListener("submit", formSubmit);
 
 // do all the initialisations inside this function
 function init() {
-  // appointmentsList.innerHTML = "";
   displayAppointments();
 }
 
