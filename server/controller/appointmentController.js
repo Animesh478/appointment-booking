@@ -1,3 +1,4 @@
+const { where } = require("sequelize");
 const Appointment = require("../models/appointmentModel");
 
 async function getAllAppointments(req, res) {
@@ -36,19 +37,49 @@ async function createAppointment(req, res) {
 }
 async function deleteAppointment(req, res) {
   const id = req.params.id;
-  //check if any appointment with that id exists or not
-  const appointment = await Appointment.findByPk(id);
-  if (!appointment) {
-    return res.status(404).json({ message: "Appointment not found" });
+  try {
+    //check if any appointment with that id exists or not
+    const appointment = await Appointment.findByPk(id);
+    if (!appointment) {
+      return res.status(404).json({ message: "Appointment not found" });
+    }
+    await Appointment.destroy({
+      where: {
+        id,
+      },
+    });
+    res.status(200).json({ message: "Appointment deleted" });
+  } catch (error) {
+    console.log(error);
   }
-  await Appointment.destroy({
-    where: {
-      id,
-    },
-  });
-  res.status(200).json({ message: "Appointment deleted" });
 }
-async function editAppointment(req, res) {}
+
+async function editAppointment(req, res) {
+  const id = req.params.id;
+  const { name, email, phone: phoneNumber } = req.body;
+  try {
+    //check if any appointment with that id exists or not
+    const appointment = await Appointment.findByPk(id);
+    if (!appointment) {
+      return res.status(404).json({ message: "Appointment not found" });
+    }
+    await Appointment.update(
+      {
+        name,
+        email,
+        phoneNumber,
+      },
+      {
+        where: {
+          id,
+        },
+      }
+    );
+    res.status(200).json({ message: "Information upadated successfully" });
+  } catch (error) {
+    console.log(error);
+  }
+}
 
 module.exports = {
   getAllAppointments,
