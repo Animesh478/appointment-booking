@@ -1,7 +1,7 @@
 const url = "http://localhost:3000/api/users";
 const form = document.querySelector("#form");
 const appointmentsList = document.querySelector("ul");
-// const editBtn = document.querySelector(".edit-btn");
+let editingAppointmentId = null;
 
 // get all appointments
 async function getAllAppointments() {
@@ -78,8 +78,14 @@ async function formSubmit(e) {
   }
 
   try {
-    const response = await axios.post(`${url}`, data);
-    console.log(response);
+    if (!editingAppointmentId) {
+      const response = await axios.post(`${url}`, data);
+      console.log(response);
+    } else {
+      const response = await axios.put(`${url}/${editingAppointmentId}`, data);
+      editingAppointmentId = null; // setting it back to null
+      console.log(response);
+    }
   } catch (error) {
     console.log(error.message);
   }
@@ -113,11 +119,24 @@ async function deleteAppointment(e) {
 function editAppointment(e) {
   if (e.target.classList.contains("edit-btn")) {
     const id = e.target.parentElement.dataset.id;
-    displayAppointments();
-  }
-  // make a put or patch request to the server with the new details
+    editingAppointmentId = id;
+    console.log(editingAppointmentId);
 
-  // display all the appointments
+    const name = document.querySelector(
+      ".appointment-details div:nth-child(1)"
+    ).textContent;
+    const email = document.querySelector(
+      ".appointment-details div:nth-child(2)"
+    ).textContent;
+    const phone = document.querySelector(
+      ".appointment-details div:nth-child(3)"
+    ).textContent;
+
+    // console.log(document.querySelector(".name"));
+    document.querySelector("#name").value = name;
+    document.querySelector("#email").value = email;
+    document.querySelector("#phone").value = phone;
+  }
 }
 
 // event listeners
